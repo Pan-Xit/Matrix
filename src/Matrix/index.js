@@ -1,11 +1,12 @@
-import React, {useState, useEffect, useMemo} from 'react';
+import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import Cell from './Cell';
 import {initialAddMatrixAction, addRowAction, deleteRowAction} from '../actions';
-import {matrixSelector, rowsSumsSelector, columnsAveragesSelector} from '../selectors';
+import {matrixSelector} from '../selectors';
+import {generateMatrix, findXNearest, generateMatrixRow} from './utils';
 
 
 const StyledBtn = styled.button`
@@ -26,59 +27,10 @@ const StyledAddBtn = styled(StyledBtn)`
   background-color: lightblue;
 `
 
-const getRandomNumber = (from = 100, to = 999) => Math.trunc(from + Math.random() * (to - from));
-
-const generateMatrixRow = (N) => new Array(N).fill(0).map(el => getRandomNumber())
-
-const generateMatrix = (M, N) => {
-
-  const matrixObject = {}
-
-  for (let i = 0; i < M; i++) {
-    matrixObject[i] = generateMatrixRow(N)
-  }
-  
-  return matrixObject;
-}
-
-const findXNearest = (matrixArray, currentValue, X) => {
-  const arr = [...new Set(matrixArray.flat())].sort();
-
-  const currentValIndex = arr.indexOf(currentValue);
-  const nearests = [];
-
-  let nextVal;
-  let prevVal;
-  for (let i = 0; i < X + 1; i++) {
-    if (!nextVal) {
-      nextVal = arr[currentValIndex + i] ?
-        Math.abs(arr[currentValIndex + i] - arr[currentValIndex]) :
-        Infinity
-    }
-
-    if (!prevVal) {
-      prevVal = arr[currentValIndex - i] ?
-        Math.abs(arr[currentValIndex - i] - arr[currentValIndex]) :
-        Infinity
-    }
-
-    if (prevVal > nextVal) {
-      nearests.push(arr[currentValIndex + i]);
-      nextVal = null;
-      continue;
-    }
-
-    nearests.push(arr[currentValIndex - i]);
-    prevVal = null;
-  }
-
-  return nearests;
-}
-
-const Matrix = ({M, N, X, matrix, rowsSums, columnsAverages, initialAddMatrix, addRow, deleteRow, updateCell, className}) => {
+const Matrix = ({M, N, X, matrix, initialAddMatrix, addRow, deleteRow, className}) => {
   const [warnings, setWarnings] = useState([]);
   const [nearest, setNearest] = useState([]);
-  const [percentagesRow, setPercentagesRow] = useState({})
+  const [percentagesRow, setPercentagesRow] = useState({});
 
   // Pass init data
   useEffect( () => { M && N && initialAddMatrix(generateMatrix(M, N)) }, [] );
@@ -105,26 +57,19 @@ const Matrix = ({M, N, X, matrix, rowsSums, columnsAverages, initialAddMatrix, a
     setNearest(nearestsVals);
   }
 
-  const onDataCellLeave = (e) => {
-    setNearest([]);
-  }
-
-  const onSumCellHover = (rowIndex, sum) => {
+  const onSumCellHover = (e, rowIndex) => {
+    const sum = Number(e.target.innerText);
     const rowValues =  matrix[rowIndex];
     setPercentagesRow({
       [rowIndex]: rowValues.map(data => Math.trunc((data / sum) * 100))
     });
   }
 
-  const onSumCellLeave = () => {
-    setPercentagesRow({});
-  } 
-
   return (
     <div>
+      {warnings.length > 0 && <div className='warnings'>{warnings.map(warning => <div className='warnings__item'>{warning}</div>)}</div>}
       <StyledAddBtn onClick={() => addRow(generateMatrixRow(N))}>Add new row</StyledAddBtn>
       <div className={className}>
-        {warnings.length > 0 && <div className='warnings'>{warnings.map(warning => <div className='warnings__item'>{warning}</div>)}</div>}
         {Object.entries(matrix).map(([rowIndex, rowData]) => (
           <div key={rowIndex} className="matrix__row">
             {percentagesRow[rowIndex] ?
@@ -144,20 +89,26 @@ const Matrix = ({M, N, X, matrix, rowsSums, columnsAverages, initialAddMatrix, a
                   rowIndex={rowIndex}
                   cellIndex={cellIndex}
                   onMouseOver={() => onDataCellHover(value)}
-                  onMouseOut={onDataCellLeave}
+                  onMouseOut={() => setNearest([])}
                   highlighted={nearest.includes(value)} />
               ))
             }
             <Cell
               key={rowIndex}
-              value={rowsSums[rowIndex]}
-              onMouseOver={() => onSumCellHover(rowIndex, rowsSums[rowIndex])}
-              onMouseOut={onSumCellLeave} />
+              value={matrix[rowIndex].reduce((el, acc) => el + acc, 0)}
+              onMouseOver={(e) => onSumCellHover(e, rowIndex)}
+              onMouseOut={() => setPercentagesRow({})} />
             <StyledDeleteBtn onClick={() => deleteRow(rowIndex)}>Delete Row</StyledDeleteBtn>
           </div>
         ))}
         <div key={'column-sums'} className="matrix__row">
-          {columnsAverages.map((sum, index) => <Cell key={`column-sum-${index}`} value={sum} />)}
+          {new Array(N)
+            .fill(0)
+            .map((el, index) => {
+              const average = Math.trunc(Object.values(matrix).map((el) => el[index]).reduce((el, acc) => el + acc, 0) / M)
+              return <Cell key={`column-sum-${index}`} value={average} />
+            })
+          }
         </div>
       </div>
     </div>
@@ -166,8 +117,6 @@ const Matrix = ({M, N, X, matrix, rowsSums, columnsAverages, initialAddMatrix, a
 
 const mapStateToProps = (state) => ({
   matrix: matrixSelector(state),
-  rowsSums: rowsSumsSelector(state),
-  columnsAverages: columnsAveragesSelector(state)
 });
 
 const mapDispatchToProps = {

@@ -1,14 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
+import classNames from 'classnames';
 
 
 import {updateMatrixCellAction} from '../actions';
 
 
 const Cell = ({value, rowIndex, cellIndex, highlighted, withBackground, updateCell, onMouseOver, onMouseOut}) => {
-  const cellClass = highlighted ? "matrix__cell highlighted" :
-    withBackground ? "matrix__cell with-background" : "matrix__cell";
+  const cellClass = classNames('matrix__cell', {
+    'highlighted': highlighted,
+    'with-background': withBackground
+  })
 
   const cellAttributes = {
     className: cellClass,
