@@ -1,11 +1,42 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {Provider} from 'react-redux';
+import styled from 'styled-components';
+
 import Matrix from './Matrix';
+import store from './store';
+
 import reportWebVitals from './reportWebVitals';
+
+import initData from './initData.json';
+
+// try {
+//   (async () => {
+//     initData = await import('./initData.json');
+//   })();
+// } catch {
+//   // Error('missing init data')
+// }
+
+const {M = 0, N = 0, X = 0} = initData;
+
+const StyledMatrix = styled(Matrix)`
+  display: grid;
+  grid-template-rows: repeat(${initData.M + 1}, 1fr);
+  grid-gap: 20px;
+
+  & .matrix__row {
+    display: grid;
+    grid-template-columns: repeat(${initData.N + 1}, 1fr);
+    grid-gap: 20px;
+  }
+`
 
 ReactDOM.render(
   <React.StrictMode>
-    <Matrix />
+    <Provider store={store}>
+      <StyledMatrix M={M} N={N} X={X} />
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );
