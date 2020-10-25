@@ -5,15 +5,28 @@ const getRowsSums = (matrixObject) => Object.fromEntries(Object.entries(matrixOb
     .map(([index, valuesArray]) => [index, valuesArray.reduce((el, acc) => el + acc, 0)]));
 
 
-const getColumnSums = (matrixArray) => {
+const getColumnAverage = (column) => {
+  return Math.trunc(column.reduce((el, acc) => el + acc, 0) / column.length)
+}
+
+const getColumnsAverages = (matrixArray) => {
   const columnSums = [];
+  const arrayLength = matrixArray[0].length;
   
-  for (let i = 0; i < matrixArray[0].length; i++) {
-    const sum = matrixArray.map((valuesArray) => valuesArray[i]).reduce((el, acc) => el + acc, 0)
-    columnSums.push(sum);
+  for (let i = 0; i < arrayLength; i++) {
+    const average = getColumnAverage(matrixArray.map((valuesArray) => valuesArray[i]))
+    columnSums.push(average);
   }
 
   return columnSums;
+}
+
+const updateColumnsAverages = (matrixArray, columnsAverages, updatedColumnIndex) => {
+  const newCaolumnAverage = getColumnAverage(matrixArray.map((valuesArray) => valuesArray[updatedColumnIndex]));
+  const columnsAveragesCopy = [...columnsAverages];
+  columnsAveragesCopy[updatedColumnIndex] = newCaolumnAverage;
+
+  return columnsAveragesCopy;
 }
 
 const getLastMatrixIndex = (matrix) => {
@@ -29,32 +42,24 @@ const getUpdatedObjectWithNewValue = (object, newIndex, newValue) => {
   return objectClone;
 }
 
-const getUpdatedMatrixWithoutRow = (matrix, rowIndex) => {
+const getUpdatedObjectWithourRow = (object, index) => {
+  const objectClone = JSON.parse(JSON.stringify(object));
+  delete objectClone[index];
+
+  return objectClone;
+}
+
+const getUpdatedMatrixWithNewCellValue = (matrix, {rowIndex, colIndex, increment}) => {
   const matrixClone = JSON.parse(JSON.stringify(matrix));
-  delete matrixClone[rowIndex];
+  matrixClone[rowIndex][colIndex] += increment;
 
   return matrixClone;
 }
 
-const getUpdatedRowsSumsWithoutRow = (rowsSums, rowIndex) => {
-  const rowsSumsClone = {...rowsSums};
-  delete rowsSumsClone[rowIndex];
-
-  return rowsSumsClone;
-}
-
-// const getUpdatedMatrixWithNewCell = (matrix, { rowIndex, columnIndex, newValue }) => {
-//   const matrixClone = JSON.parse(JSON.stringify(matrix));
-//   matrixClone[rowIndex][columnIndex] = newValue;
-
-//   return matrixClone;
-// }
-
-
 const initialState = {
   matrix: {},
   rowsSums: {},
-  columnsSums: [],
+  columnsAverages: [],
 }
 
 const matrixReducer = (state = initialState, action) => {
@@ -66,7 +71,7 @@ const matrixReducer = (state = initialState, action) => {
         ...state,
         matrix: action.payload,
         rowsSums: getRowsSums(matrixArray),
-        columnsSums: getColumnSums(matrixArray)
+        columnsAverages: getColumnsAverages(matrixArray)
       };
     case actionTypes.ADD_ROW:
       const newRowIndex = getLastMatrixIndex(state.matrix) + 1;
@@ -76,24 +81,27 @@ const matrixReducer = (state = initialState, action) => {
         ...state,
         matrix: getUpdatedObjectWithNewValue(state.matrix, newRowIndex, action.payload),
         rowsSums: getUpdatedObjectWithNewValue(state.rowsSums, newRowIndex, action.payload.reduce((el, acc) => el + acc, 0)),
-        columnsSums: getColumnSums(Object.values(updatedMatrix)),
+        columnsAverages: getColumnsAverages(Object.values(updatedMatrix)),
       }
     case actionTypes.DELETE_ROW:
-      updatedMatrix = getUpdatedMatrixWithoutRow(state.matrix, action.payload);
-      const updatedRowsSums = getUpdatedRowsSumsWithoutRow(state.rowsSums, action.payload);
+      updatedMatrix = getUpdatedObjectWithourRow(state.matrix, action.payload);
+      const updatedRowsSums = getUpdatedObjectWithourRow(state.rowsSums, action.payload);
 
       return {
         ...state,
         matrix: updatedMatrix,
         rowsSums: updatedRowsSums,
-        columnsSums: getColumnSums(Object.values(updatedMatrix)),
+        columnsAverages: getColumnsAverages(Object.values(updatedMatrix)),
       }
-      
-      
-      // { ...state, matrix: getUpdatedMatrixWithoutRow(state.matrix, action.payload)};
+    case actionTypes.UPDATE_MATRIX_CELL:
+      updatedMatrix = getUpdatedMatrixWithNewCellValue(state.matrix, {...action.payload});
 
-
-    // case actionTypes.UPDATE_MATRIX_CELL: return { ...state, matrix: getUpdatedMatrixWithNewCell(state, {...action.payload})};
+      return {
+        ...state,
+        matrix: updatedMatrix,
+        rowsSums: { ...state.rowsSums, [action.payload.rowIndex]: state.rowsSums[action.payload.rowIndex] + 1},
+        columnsAverages: updateColumnsAverages(Object.values(updatedMatrix), state.columnsAverages, action.payload.colIndex),
+      }
     default: return state;
   }
 }

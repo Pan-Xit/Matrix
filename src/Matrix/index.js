@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import Cell from './Cell';
 import {initialAddMatrixAction, addRowAction, deleteRowAction} from '../actions';
-import {matrixSelector, rowsSumsSelector, columnsSumsSelector} from '../selectors';
+import {matrixSelector, rowsSumsSelector, columnsAveragesSelector} from '../selectors';
 
 
 const getRandomNumber = (from = 100, to = 999) => Math.trunc(from + Math.random() * (to - from));
@@ -22,7 +22,7 @@ const generateMatrix = (M, N) => {
   return matrixObject;
 }
 
-const Matrix = ({M, N, X, matrix, rowsSums, columnsSums, initialAddMatrix, addRow, deleteRow, className}) => {
+const Matrix = ({M, N, X, matrix, rowsSums, columnsAverages, initialAddMatrix, addRow, deleteRow, className}) => {
   const [warnings, setWarnings] = useState([]);
 
   // Pass init data
@@ -64,7 +64,7 @@ const Matrix = ({M, N, X, matrix, rowsSums, columnsSums, initialAddMatrix, addRo
         </div>
       ))}
       <div key={'column-sums'} className="matrix__row">
-        {columnsSums.map((sum, index) => <Cell key={`column-sum-${index}`} value={sum} />)}
+        {columnsAverages.map((sum, index) => <Cell key={`column-sum-${index}`} value={sum} />)}
       </div>
       <button onClick={() => addRow(generateMatrixRow(N))}>Add new row</button>
     </div>
@@ -74,7 +74,7 @@ const Matrix = ({M, N, X, matrix, rowsSums, columnsSums, initialAddMatrix, addRo
 const mapStateToProps = (state) => ({
   matrix: matrixSelector(state),
   rowsSums: rowsSumsSelector(state),
-  columnsSums: columnsSumsSelector(state)
+  columnsAverages: columnsAveragesSelector(state)
 });
 
 const mapDispatchToProps = {

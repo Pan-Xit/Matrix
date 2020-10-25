@@ -6,12 +6,12 @@ export const initialAddMatrixAction = (matrix) => ({
   payload: matrix
 });
 
-export const updateMatrixCellAction = (rowIndex, columnIndex, newValue) => ({
+export const updateMatrixCellAction = (rowIndex, colIndex, increment) => ({
   type: actionTypes.UPDATE_MATRIX_CELL,
   payload: {
     rowIndex,
-    columnIndex,
-    newValue
+    colIndex,
+    increment
   }
 });
 
