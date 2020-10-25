@@ -3,7 +3,7 @@ import * as actionTypes from '../actions/actionTypes';
 const getLastMatrixIndex = (matrix) => {
   const keys = Object.keys(matrix);
 
-  return Number(keys[keys.length - 1]);
+  return keys.length > 0 ? Number(keys[keys.length - 1]) : 0;
 }
 
 const getUpdatedObjectWithNewValue = (object, newIndex, newValue) => {
