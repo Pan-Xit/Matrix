@@ -5,9 +5,13 @@ import {connect} from 'react-redux';
 
 import {updateMatrixCellAction} from '../actions';
 
-const Cell = ({value, rowIndex, cellIndex, updateCell}) => {
+
+const Cell = ({value, rowIndex, cellIndex, highlighted, withBackground, updateCell, onMouseOver, onMouseOut}) => {
+  const cellClass = highlighted ? "matrix__cell highlighted" :
+    withBackground ? "matrix__cell with-background" : "matrix__cell";
+
   const cellAttributes = {
-    className: "matrix__cell",
+    className: cellClass,
   }
 
   if (rowIndex !== undefined && cellIndex !== undefined) {
@@ -15,7 +19,19 @@ const Cell = ({value, rowIndex, cellIndex, updateCell}) => {
     cellAttributes['onClick'] = () => updateCell(rowIndex, cellIndex, 1);
   }
 
-  return <div {...cellAttributes}>{value}</div>
+  if (onMouseOver) {
+    cellAttributes['onMouseOver'] = onMouseOver;
+  }
+
+  if (onMouseOut) {
+    cellAttributes['onMouseOut'] = onMouseOut;
+  }
+
+  return (
+    <div {...cellAttributes}>
+      {withBackground && <span className='matrix__cell-deco' style={{width: `${value}%`}}></span>}
+      {value}
+    </div>)
 }
 
 const mapDispatchToProps = {
