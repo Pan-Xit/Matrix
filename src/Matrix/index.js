@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 
 import Cell from './Cell';
-import {initialAddMatrixAction, addRowAction} from '../actions';
+import {initialAddMatrixAction, addRowAction, deleteRowAction} from '../actions';
 import {matrixSelector, rowsSumsSelector, columnsSumsSelector} from '../selectors';
 
 
@@ -22,7 +22,7 @@ const generateMatrix = (M, N) => {
   return matrixObject;
 }
 
-const Matrix = ({M, N, X, matrix, rowsSums, columnsSums, initialAddMatrix, addRow, className}) => {
+const Matrix = ({M, N, X, matrix, rowsSums, columnsSums, initialAddMatrix, addRow, deleteRow, className}) => {
   const [warnings, setWarnings] = useState([]);
 
   // Pass init data
@@ -45,8 +45,6 @@ const Matrix = ({M, N, X, matrix, rowsSums, columnsSums, initialAddMatrix, addRo
     setWarnings(['Missing amount of nearest values'])
   }
 
-  const addNewRow = () => addRow(generateMatrixRow(N));
-
   return (
     <div className={className}>
       {warnings.length > 0 && <div className='warnings'>{warnings.map(warning => <div className='warnings__item'>{warning}</div>)}</div>}
@@ -60,14 +58,15 @@ const Matrix = ({M, N, X, matrix, rowsSums, columnsSums, initialAddMatrix, addRo
               cellIndex={cellIndex} />
           ))}
           <Cell
-            key={`row-sum-${rowIndex}`}
+            key={rowIndex}
             value={rowsSums[rowIndex]} />
+          <button onClick={() => deleteRow(rowIndex)}>Delete Row</button>
         </div>
       ))}
       <div key={'column-sums'} className="matrix__row">
         {columnsSums.map((sum, index) => <Cell key={`column-sum-${index}`} value={sum} />)}
       </div>
-      <button onClick={addNewRow}>Add new row</button>
+      <button onClick={() => addRow(generateMatrixRow(N))}>Add new row</button>
     </div>
   )
 }
@@ -80,7 +79,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   initialAddMatrix: (matrix) => initialAddMatrixAction(matrix),
-  addRow: (rowValues) => addRowAction(rowValues)
+  addRow: (rowValues) => addRowAction(rowValues),
+  deleteRow: (rowIndex) => deleteRowAction(rowIndex),
 }
 
 Matrix.propTypes = {

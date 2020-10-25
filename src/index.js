@@ -27,7 +27,7 @@ const StyledMatrix = styled(Matrix)`
 
   & .matrix__row {
     display: grid;
-    grid-template-columns: repeat(${initData.N + 1}, 1fr);
+    grid-template-columns: repeat(${initData.N + 2}, 1fr);
     grid-gap: 20px;
   }
 `
