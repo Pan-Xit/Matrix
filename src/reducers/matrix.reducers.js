@@ -22,6 +22,12 @@ const getLastMatrixIndex = (matrix) => {
   return keys[keys.length - 1];
 }
 
+const getUpdatedMatrixWithNewRow = (matrix, newRowValues) => {
+  const matrixClone = JSON.parse(JSON.stringify(matrix));
+  matrixClone[+getLastMatrixIndex(matrixClone) + 1] = newRowValues; 
+
+  return matrixClone;
+}
 
 // const getUpdatedMatrixWithNewCell = (matrix, { rowIndex, columnIndex, newValue }) => {
 //   const matrixClone = JSON.parse(JSON.stringify(matrix));
@@ -30,12 +36,7 @@ const getLastMatrixIndex = (matrix) => {
 //   return matrixClone;
 // }
 
-// const getUpdatedMatrixWithNewRow = (matrix, newRowValues) => {
-//   const matrixClone = JSON.parse(JSON.stringify(matrix));
-//   matrixClone[getLastMatrixIndex(matrixClone) + 1] = newRowValues; 
 
-//   return matrixClone;
-// }
 
 // const getUpdatedMatrixWithoutRow = (matrix, rowIndex) => {
 //   const matrixClone = JSON.parse(JSON.stringify(matrix));
@@ -43,6 +44,7 @@ const getLastMatrixIndex = (matrix) => {
 
 //   return matrixClone;
 // }
+
 
 const initialState = {
   matrix: {},
@@ -60,8 +62,15 @@ const matrixReducer = (state = initialState, action) => {
         rowsSums: getRowsSums(matrixArray),
         columnsSums: getColumnSums(matrixArray)
       };
+    case actionTypes.ADD_ROW:
+      const updatedMatrix = getUpdatedMatrixWithNewRow(state.matrix, action.payload);
+      return {
+        ...state,
+        matrix: updatedMatrix,
+        rowsSums: [...state.rowsSums, action.payload.reduce((el, acc) => el + acc, 0)],
+        columnsSums: getColumnSums(Object.values(updatedMatrix)),
+      }
     // case actionTypes.UPDATE_MATRIX_CELL: return { ...state, matrix: getUpdatedMatrixWithNewCell(state, {...action.payload})};
-    // case actionTypes.ADD_ROW: return { ...state, matrix: getUpdatedMatrixWithNewRow(state, action.payload)};
     // case actionTypes.DELETE_ROW: return { ...state, matrix: getUpdatedMatrixWithoutRow(state, action.payload)};
     default: return state;
   }

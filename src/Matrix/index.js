@@ -3,24 +3,26 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 
 import Cell from './Cell';
-import {initialAddMatrixAction} from '../actions';
+import {initialAddMatrixAction, addRowAction} from '../actions';
 import {matrixSelector, rowsSumsSelector, columnsSumsSelector} from '../selectors';
 
 
-const getRandomNumber = (from = 100, to = 999) => Math.trunc(from + Math.random() * (to - from))
+const getRandomNumber = (from = 100, to = 999) => Math.trunc(from + Math.random() * (to - from));
+
+const generateMatrixRow = (N) => new Array(N).fill(0).map(el => getRandomNumber())
 
 const generateMatrix = (M, N) => {
 
   const matrixObject = {}
 
   for (let i = 0; i < M; i++) {
-    matrixObject[i] = new Array(N).fill(0).map(el => getRandomNumber())
+    matrixObject[i] = generateMatrixRow(N)
   }
   
   return matrixObject;
 }
 
-const Matrix = ({M, N, X, matrix, rowsSums, columnsSums, initialAddMatrix, className}) => {
+const Matrix = ({M, N, X, matrix, rowsSums, columnsSums, initialAddMatrix, addRow, className}) => {
   const [warnings, setWarnings] = useState([]);
 
   // Pass init data
@@ -43,6 +45,8 @@ const Matrix = ({M, N, X, matrix, rowsSums, columnsSums, initialAddMatrix, class
     setWarnings(['Missing amount of nearest values'])
   }
 
+  const addNewRow = () => addRow(generateMatrixRow(N));
+
   return (
     <div className={className}>
       {warnings.length > 0 && <div className='warnings'>{warnings.map(warning => <div className='warnings__item'>{warning}</div>)}</div>}
@@ -63,6 +67,7 @@ const Matrix = ({M, N, X, matrix, rowsSums, columnsSums, initialAddMatrix, class
       <div key={'column-sums'} className="matrix__row">
         {columnsSums.map((sum, index) => <Cell key={`column-sum-${index}`} value={sum} />)}
       </div>
+      <button onClick={addNewRow}>Add new row</button>
     </div>
   )
 }
@@ -74,7 +79,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-  initialAddMatrix: (matrix) => initialAddMatrixAction(matrix)
+  initialAddMatrix: (matrix) => initialAddMatrixAction(matrix),
+  addRow: (rowValues) => addRowAction(rowValues)
 }
 
 Matrix.propTypes = {
