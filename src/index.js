@@ -21,9 +21,13 @@ import initData from './initData.json';
 const {M = 0, N = 0, X = 0} = initData;
 
 const StyledMatrix = styled(Matrix)`
+  position: relative;
   display: grid;
   grid-template-rows: repeat(${initData.M + 1}, 1fr);
   grid-gap: 20px;
+  max-width: 100vw;
+  max-height: calc(100vh - 120px);
+  overflow: scroll;
 
   & .matrix__row {
     display: grid;
@@ -31,25 +35,34 @@ const StyledMatrix = styled(Matrix)`
     grid-gap: 20px;
   }
 
-  & .matrix__cell.highlighted {
-    background-color: lightgreen;
-  }
+  & .matrix__cell {
+    min-width: 150px;
+    min-height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border: 1px solid lightgrey;
+    cursor: pointer;
 
-  & .matrix__cell.with-background {
-    position: relative;
-
-    & .matrix__cell-deco {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      background-color: lightgrey;
-      z-index: -1;
+    &.highlighted {
+      background-color: lightgreen;
     }
-  }
 
-  & .matrix__cell.with-background::after {
-    content: ' %';
+    &.with-background {
+      position: relative;
+
+      &::after {
+        content: ' %';
+      }
+
+      & .matrix__cell-deco {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background-color: lightgrey;
+        z-index: -1;
+      }
+    }
   }
 `
 
