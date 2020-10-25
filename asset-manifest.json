@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.js": "/Pan-Xit/Matrix/static/js/main.25654c04.chunk.js",
-    "main.js.map": "/Pan-Xit/Matrix/static/js/main.25654c04.chunk.js.map",
-    "runtime-main.js": "/Pan-Xit/Matrix/static/js/runtime-main.5bd0bdd0.js",
-    "runtime-main.js.map": "/Pan-Xit/Matrix/static/js/runtime-main.5bd0bdd0.js.map",
-    "static/js/2.e5860ce6.chunk.js": "/Pan-Xit/Matrix/static/js/2.e5860ce6.chunk.js",
-    "static/js/2.e5860ce6.chunk.js.map": "/Pan-Xit/Matrix/static/js/2.e5860ce6.chunk.js.map",
-    "static/js/3.0ac91224.chunk.js": "/Pan-Xit/Matrix/static/js/3.0ac91224.chunk.js",
-    "static/js/3.0ac91224.chunk.js.map": "/Pan-Xit/Matrix/static/js/3.0ac91224.chunk.js.map",
-    "index.html": "/Pan-Xit/Matrix/index.html",
-    "static/js/2.e5860ce6.chunk.js.LICENSE.txt": "/Pan-Xit/Matrix/static/js/2.e5860ce6.chunk.js.LICENSE.txt"
+    "main.js": "/Matrix/static/js/main.25654c04.chunk.js",
+    "main.js.map": "/Matrix/static/js/main.25654c04.chunk.js.map",
+    "runtime-main.js": "/Matrix/static/js/runtime-main.a84a9326.js",
+    "runtime-main.js.map": "/Matrix/static/js/runtime-main.a84a9326.js.map",
+    "static/js/2.5340c2f4.chunk.js": "/Matrix/static/js/2.5340c2f4.chunk.js",
+    "static/js/2.5340c2f4.chunk.js.map": "/Matrix/static/js/2.5340c2f4.chunk.js.map",
+    "static/js/3.0ac91224.chunk.js": "/Matrix/static/js/3.0ac91224.chunk.js",
+    "static/js/3.0ac91224.chunk.js.map": "/Matrix/static/js/3.0ac91224.chunk.js.map",
+    "index.html": "/Matrix/index.html",
+    "static/js/2.5340c2f4.chunk.js.LICENSE.txt": "/Matrix/static/js/2.5340c2f4.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.5bd0bdd0.js",
-    "static/js/2.e5860ce6.chunk.js",
+    "static/js/runtime-main.a84a9326.js",
+    "static/js/2.5340c2f4.chunk.js",
     "static/js/main.25654c04.chunk.js"
   ]
 }
