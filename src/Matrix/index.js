@@ -22,7 +22,7 @@ const StyledAddBtn = styled(StyledBtn)`
   display: block;
   width: 200px;
   height: 30px;
-  margin: 0 auto 30px;
+  margin: 30px auto 30px;
   background-color: lightblue;
 `
 
